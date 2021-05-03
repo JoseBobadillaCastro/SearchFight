@@ -5,8 +5,8 @@ namespace SearchFight.Core.Model
 {
     public class Result
     {
-        public string engineName { get; set; }
         public string query { get; set; }
+        public string engineName { get; set; }
         public int resultsCount { get; set; }
     }
 }

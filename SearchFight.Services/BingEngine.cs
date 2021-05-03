@@ -14,6 +14,7 @@ namespace SearchFight.Services
         private HttpClient _httpClient = new HttpClient() { DefaultRequestHeaders = { { "Ocp-Apim-Subscription-Key", ConfigurationManager.AppSetting["BingEngine:SubscriptionKey"] } } };
         public int searchResultsCount(string query)
         {
+            if (string.IsNullOrWhiteSpace(query)) throw new ArgumentException("Input parameter is not valid", nameof(query));
             try
             {
                 var response = _httpClient.GetStringAsync(endpoint.Replace("{query}", query)).Result;
