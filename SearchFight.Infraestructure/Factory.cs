@@ -6,19 +6,17 @@ using SearchFight.Services;
 using System.Linq;
 namespace SearchFight.Infraestructure
 {
-    public class SearchFightFactory
+    public class Factory
     {
-        public static SearchFight.Core.SearchFight createEngines() 
+        public static Manager createManager()
         {
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies()
                 ?.Where(assembly => assembly.FullName.StartsWith("SearchFight"));
-
             var searchEngines = loadedAssemblies
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(type => type.GetInterface(typeof(IEngine).ToString()) != null)
                 .Select(type => Activator.CreateInstance(type) as IEngine);
-
-            return new SearchFight.Core.SearchFight(searchEngines);
+            return new Manager(searchEngines);
         }
     }
 }

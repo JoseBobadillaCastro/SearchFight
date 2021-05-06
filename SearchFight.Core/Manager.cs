@@ -4,31 +4,33 @@ using System.Text;
 using SearchFight.Services;
 using SearchFight.Core.Model;
 using System.Linq;
+using System.Threading.Tasks;
 namespace SearchFight.Core
 {
-    public class SearchFight
+    public class Manager
     {
         private IEnumerable<IEngine> _Engines;
         private StringBuilder _sb;
-        public SearchFight(IEnumerable<IEngine> Engines) 
+        public Manager(IEnumerable<IEngine> Engines)
         {
             _Engines = Engines;
             _sb = new StringBuilder();
         }
-        public string loadResults(List<string> query) 
+        public async Task<string> loadResults(List<string> query)
         {
             List<Result> results = new List<Result>();
             foreach (var word in query)
             {
+                _sb.Append(word + ": ");
                 foreach (var engine in _Engines)
                 {
                     results.Add(new Result
                     {
-                        engineName = engine.name,
                         query = word,
-                        resultsCount = engine.searchResultsCount(word),
+                        engineName = engine.name,
+                        total = await engine.searchResultsCount(word),
                     });
-                    _sb.Append(word + ": " + results.Last().engineName + ": " + results.Last().resultsCount + " ");
+                    _sb.Append(results.Last().engineName + ": " + results.Last().total + " ");
                 }
                 _sb.AppendLine();
             }
@@ -36,28 +38,21 @@ namespace SearchFight.Core
             getTotalWinner(results);
             return _sb.ToString();
         }
-        private void getSearchResults(List<Result> results) 
-        {
-            foreach (var r in results)
-            {
-                _sb.AppendLine(r.query + ": " + r.engineName + ": " + r.resultsCount);
-            }
-        }
-        private void getWinners(List<Result> results) 
+        private void getWinners(List<Result> results)
         {
             Result[] winners = results.Select(result => result.engineName).Distinct()
                 .Select(engine => results.Where(result => result.engineName == engine)
-                .OrderByDescending(model => model.resultsCount).First()).ToArray();
+                .OrderByDescending(model => model.total).First()).ToArray();
             foreach (var w in winners)
             {
                 _sb.AppendLine(w.engineName + " winner: " + w.query);
             }
         }
-        private void getTotalWinner(List<Result> results) 
+        private void getTotalWinner(List<Result> results)
         {
             _sb.AppendLine("Total winner: " + results
                 .GroupBy(o => o.query).Distinct()
-                .Select(grouping => new { Word = grouping.Key, Total = grouping.Sum(o => o.resultsCount) })
+                .Select(grouping => new { Word = grouping.Key, Total = grouping.Sum(o => o.total) })
                 .OrderByDescending(o => o.Total).First().Word);
         }
     }

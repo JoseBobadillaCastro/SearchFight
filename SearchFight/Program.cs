@@ -12,7 +12,7 @@ namespace SearchFight
                 Console.WriteLine("Please type a word to search ...");
             }
             Console.WriteLine("SearchFighting ...");
-            var searchFight = SearchFightFactory.createEngines();
+            var searchFight = Factory.createManager();
             Console.WriteLine(searchFight.loadResults(args.ToList()));
         }
     }
