@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SearchFight.Services;
+<<<<<<< HEAD
 using System.Threading.Tasks;
+=======
+>>>>>>> 637b5dbd39f8ee2c42877a7654d9ec86bed51439
 namespace SearchFight.Tests
 {
     [TestClass]
